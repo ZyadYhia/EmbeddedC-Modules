@@ -1,5 +1,4 @@
-```
-# Keypad
-### uses internal F_CPU and delay
+
+# *Keypad*
+### uses internal `F_CPU` and `delay.h`
 ---
-```
