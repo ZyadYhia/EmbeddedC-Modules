@@ -3,29 +3,29 @@ Keypad.elf:     file format elf32-avr
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .text         000003d0  00000000  00000000  00000054  2**1
+  0 .text         000003de  00000000  00000000  00000054  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  1 .data         00000000  00800060  00800060  00000424  2**0
+  1 .data         00000000  00800060  00800060  00000432  2**0
                   CONTENTS, ALLOC, LOAD, DATA
-  2 .comment      00000030  00000000  00000000  00000424  2**0
+  2 .comment      00000030  00000000  00000000  00000432  2**0
                   CONTENTS, READONLY
-  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000454  2**2
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  00000464  2**2
                   CONTENTS, READONLY
-  4 .debug_aranges 00000100  00000000  00000000  00000490  2**0
+  4 .debug_aranges 00000100  00000000  00000000  000004a0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  5 .debug_info   00001482  00000000  00000000  00000590  2**0
+  5 .debug_info   000014bc  00000000  00000000  000005a0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_abbrev 00000633  00000000  00000000  00001a12  2**0
+  6 .debug_abbrev 00000633  00000000  00000000  00001a5c  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_line   00000719  00000000  00000000  00002045  2**0
+  7 .debug_line   0000072a  00000000  00000000  0000208f  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_frame  000001e4  00000000  00000000  00002760  2**2
+  8 .debug_frame  000001e4  00000000  00000000  000027bc  2**2
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_str    00000401  00000000  00000000  00002944  2**0
+  9 .debug_str    00000401  00000000  00000000  000029a0  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_loc    000007d0  00000000  00000000  00002d45  2**0
+ 10 .debug_loc    000007f8  00000000  00000000  00002da1  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_ranges 000001c8  00000000  00000000  00003515  2**0
+ 11 .debug_ranges 000001c8  00000000  00000000  00003599  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -61,7 +61,7 @@ Disassembly of section .text:
   5c:	de bf       	out	0x3e, r29	; 62
   5e:	cd bf       	out	0x3d, r28	; 61
   60:	0e 94 59 00 	call	0xb2	; 0xb2 <main>
-  64:	0c 94 e6 01 	jmp	0x3cc	; 0x3cc <_exit>
+  64:	0c 94 ed 01 	jmp	0x3da	; 0x3da <_exit>
 
 00000068 <__bad_interrupt>:
   68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
@@ -164,11 +164,15 @@ void setPortA(char data){
   e4:	c9 e0       	ldi	r28, 0x09	; 9
 	while (1)
 	{
+		//RESET KEYPAD
 		PORTD |= (1<<0)|(1<<1)|(1<<2);
   e6:	82 b3       	in	r24, 0x12	; 18
   e8:	87 60       	ori	r24, 0x07	; 7
   ea:	82 bb       	out	0x12, r24	; 18
-		if (isPressedD(4)) //First H-Line
+		//---------------------------------------------------------------------------------------------------------------------
+		//--------------------------------------------------1'st H-Line--------------------------------------------------------
+		//---------------------------------------------------------------------------------------------------------------------
+		if (isPressedD(4))
   ec:	84 e0       	ldi	r24, 0x04	; 4
   ee:	90 e0       	ldi	r25, 0x00	; 0
   f0:	0e 94 4d 00 	call	0x9a	; 0x9a <isPressedD>
@@ -212,8 +216,8 @@ void setPortA(char data){
  130:	00 c0       	rjmp	.+0      	; 0x132 <main+0x80>
  132:	00 00       	nop
 				//No.3
-				setPortA(0);
-				setPortA(3);
+				setPortA(0); //reset 7-SEGMENT
+				setPortA(3); //set 7-SEGMENT
 			}
 			_delay_ms(100);
 			setPinD(1);
@@ -246,8 +250,8 @@ void setPortA(char data){
  16a:	00 c0       	rjmp	.+0      	; 0x16c <main+0xba>
  16c:	00 00       	nop
 				//No.2
-				setPortA(0);
-				setPortA(2);
+				setPortA(0); //reset 7-SEGMENT
+				setPortA(2); //set 7-SEGMENT
 			}
 			_delay_ms(100);
 			setPinD(2);
@@ -279,12 +283,12 @@ void setPortA(char data){
  1a2:	e1 f7       	brne	.-8      	; 0x19c <main+0xea>
  1a4:	00 c0       	rjmp	.+0      	; 0x1a6 <main+0xf4>
  1a6:	00 00       	nop
-				setPortA(0);
-				setPortA(1);
-			}
-			_delay_ms(100);
 		}
-		if (isPressedD(5)) //second H-Line
+		//---------------------------------------------------------------------------------------------------------------------
+		//--------------------------------------------------2'nd H-Line--------------------------------------------------------
+		//---------------------------------------------------------------------------------------------------------------------
+
+		if (isPressedD(5))
  1a8:	85 e0       	ldi	r24, 0x05	; 5
  1aa:	90 e0       	ldi	r25, 0x00	; 0
  1ac:	0e 94 4d 00 	call	0x9a	; 0x9a <isPressedD>
@@ -322,8 +326,8 @@ void setPortA(char data){
  1ec:	00 c0       	rjmp	.+0      	; 0x1ee <main+0x13c>
  1ee:	00 00       	nop
 				//No.6
-				setPortA(0);
-				setPortA(6);
+				setPortA(0); //reset 7-SEGMENT
+				setPortA(6); //set 7-SEGMENT
 			}
 			_delay_ms(100);
 			setPinD(1);
@@ -356,8 +360,8 @@ void setPortA(char data){
  226:	00 c0       	rjmp	.+0      	; 0x228 <main+0x176>
  228:	00 00       	nop
 				//No.5
-				setPortA(0);
-				setPortA(5);
+				setPortA(0); //reset 7-SEGMENT
+				setPortA(5); //set 7-SEGMENT
 			}
 			_delay_ms(100);
 			setPinD(2);
@@ -389,11 +393,11 @@ void setPortA(char data){
  25e:	e1 f7       	brne	.-8      	; 0x258 <main+0x1a6>
  260:	00 c0       	rjmp	.+0      	; 0x262 <main+0x1b0>
  262:	00 00       	nop
-				setPortA(0);
-				setPortA(4);
-			}
 			_delay_ms(100);
 		}
+		//---------------------------------------------------------------------------------------------------------------------
+		//--------------------------------------------------3'rd H-Line--------------------------------------------------------
+		//---------------------------------------------------------------------------------------------------------------------
 		if (isPressedD(6)) //third H-Line
  264:	86 e0       	ldi	r24, 0x06	; 6
  266:	90 e0       	ldi	r25, 0x00	; 0
@@ -432,8 +436,8 @@ void setPortA(char data){
  2a8:	00 c0       	rjmp	.+0      	; 0x2aa <main+0x1f8>
  2aa:	00 00       	nop
 				//No.9
-				setPortA(0);
-				setPortA(9);
+				setPortA(0); //reset 7-SEGMENT
+				setPortA(9); //set 7-SEGMENT
 			}
 			_delay_ms(100);
 			setPinD(1);
@@ -466,8 +470,8 @@ void setPortA(char data){
  2e2:	00 c0       	rjmp	.+0      	; 0x2e4 <main+0x232>
  2e4:	00 00       	nop
 				//No.8
-				setPortA(0);
-				setPortA(8);
+				setPortA(0); //reset 7-SEGMENT
+				setPortA(8); //set 7-SEGMENT
 			}
 			_delay_ms(100);
 			setPinD(2);
@@ -499,11 +503,11 @@ void setPortA(char data){
  31a:	e1 f7       	brne	.-8      	; 0x314 <main+0x262>
  31c:	00 c0       	rjmp	.+0      	; 0x31e <main+0x26c>
  31e:	00 00       	nop
-				setPortA(0);
-				setPortA(7);
-			}
-			_delay_ms(100);
 		}
+		//---------------------------------------------------------------------------------------------------------------------
+		//--------------------------------------------------4'th H-Line--------------------------------------------------------
+		//---------------------------------------------------------------------------------------------------------------------
+
 		if (isPressedD(7)) //forth H-Line
  320:	87 e0       	ldi	r24, 0x07	; 7
  322:	90 e0       	ldi	r25, 0x00	; 0
@@ -528,81 +532,89 @@ void setPortA(char data){
  346:	87 e0       	ldi	r24, 0x07	; 7
  348:	90 e0       	ldi	r25, 0x00	; 0
  34a:	0e 94 4d 00 	call	0x9a	; 0x9a <isPressedD>
- 34e:	2f ef       	ldi	r18, 0xFF	; 255
- 350:	81 ee       	ldi	r24, 0xE1	; 225
- 352:	94 e0       	ldi	r25, 0x04	; 4
- 354:	21 50       	subi	r18, 0x01	; 1
- 356:	80 40       	sbci	r24, 0x00	; 0
- 358:	90 40       	sbci	r25, 0x00	; 0
- 35a:	e1 f7       	brne	.-8      	; 0x354 <main+0x2a2>
- 35c:	00 c0       	rjmp	.+0      	; 0x35e <main+0x2ac>
- 35e:	00 00       	nop
+ 34e:	89 2b       	or	r24, r25
+ 350:	11 f0       	breq	.+4      	; 0x356 <main+0x2a4>
+ 352:	8f e0       	ldi	r24, 0x0F	; 15
+ 354:	8b bb       	out	0x1b, r24	; 27
+ 356:	2f ef       	ldi	r18, 0xFF	; 255
+ 358:	81 ee       	ldi	r24, 0xE1	; 225
+ 35a:	94 e0       	ldi	r25, 0x04	; 4
+ 35c:	21 50       	subi	r18, 0x01	; 1
+ 35e:	80 40       	sbci	r24, 0x00	; 0
+ 360:	90 40       	sbci	r25, 0x00	; 0
+ 362:	e1 f7       	brne	.-8      	; 0x35c <main+0x2aa>
+ 364:	00 c0       	rjmp	.+0      	; 0x366 <main+0x2b4>
+ 366:	00 00       	nop
 			{
 				//No.#
+				setPortA(0X0F); //F 7-SEGMENT
 			}
 			_delay_ms(100);
 			setPinD(1);
- 360:	81 e0       	ldi	r24, 0x01	; 1
- 362:	90 e0       	ldi	r25, 0x00	; 0
- 364:	0e 94 36 00 	call	0x6c	; 0x6c <setPinD>
-			resetPinD(0);
- 368:	80 e0       	ldi	r24, 0x00	; 0
+ 368:	81 e0       	ldi	r24, 0x01	; 1
  36a:	90 e0       	ldi	r25, 0x00	; 0
- 36c:	0e 94 41 00 	call	0x82	; 0x82 <resetPinD>
-			resetPinD(2);
- 370:	82 e0       	ldi	r24, 0x02	; 2
+ 36c:	0e 94 36 00 	call	0x6c	; 0x6c <setPinD>
+			resetPinD(0);
+ 370:	80 e0       	ldi	r24, 0x00	; 0
  372:	90 e0       	ldi	r25, 0x00	; 0
  374:	0e 94 41 00 	call	0x82	; 0x82 <resetPinD>
-			if (isPressedD(7))
- 378:	87 e0       	ldi	r24, 0x07	; 7
+			resetPinD(2);
+ 378:	82 e0       	ldi	r24, 0x02	; 2
  37a:	90 e0       	ldi	r25, 0x00	; 0
- 37c:	0e 94 4d 00 	call	0x9a	; 0x9a <isPressedD>
- 380:	89 2b       	or	r24, r25
- 382:	09 f0       	breq	.+2      	; 0x386 <main+0x2d4>
- 384:	1b ba       	out	0x1b, r1	; 27
- 386:	2f ef       	ldi	r18, 0xFF	; 255
- 388:	81 ee       	ldi	r24, 0xE1	; 225
- 38a:	94 e0       	ldi	r25, 0x04	; 4
- 38c:	21 50       	subi	r18, 0x01	; 1
- 38e:	80 40       	sbci	r24, 0x00	; 0
- 390:	90 40       	sbci	r25, 0x00	; 0
- 392:	e1 f7       	brne	.-8      	; 0x38c <main+0x2da>
- 394:	00 c0       	rjmp	.+0      	; 0x396 <main+0x2e4>
- 396:	00 00       	nop
+ 37c:	0e 94 41 00 	call	0x82	; 0x82 <resetPinD>
+			if (isPressedD(7))
+ 380:	87 e0       	ldi	r24, 0x07	; 7
+ 382:	90 e0       	ldi	r25, 0x00	; 0
+ 384:	0e 94 4d 00 	call	0x9a	; 0x9a <isPressedD>
+ 388:	89 2b       	or	r24, r25
+ 38a:	09 f0       	breq	.+2      	; 0x38e <main+0x2dc>
+ 38c:	1b ba       	out	0x1b, r1	; 27
+ 38e:	2f ef       	ldi	r18, 0xFF	; 255
+ 390:	81 ee       	ldi	r24, 0xE1	; 225
+ 392:	94 e0       	ldi	r25, 0x04	; 4
+ 394:	21 50       	subi	r18, 0x01	; 1
+ 396:	80 40       	sbci	r24, 0x00	; 0
+ 398:	90 40       	sbci	r25, 0x00	; 0
+ 39a:	e1 f7       	brne	.-8      	; 0x394 <main+0x2e2>
+ 39c:	00 c0       	rjmp	.+0      	; 0x39e <main+0x2ec>
+ 39e:	00 00       	nop
 			{
 				//No.0
-				setPortA(0);
+				setPortA(0); //reset 7-SEGMENT
 			}
 			_delay_ms(100);
 			setPinD(2);
- 398:	82 e0       	ldi	r24, 0x02	; 2
- 39a:	90 e0       	ldi	r25, 0x00	; 0
- 39c:	0e 94 36 00 	call	0x6c	; 0x6c <setPinD>
-			resetPinD(1);
- 3a0:	81 e0       	ldi	r24, 0x01	; 1
+ 3a0:	82 e0       	ldi	r24, 0x02	; 2
  3a2:	90 e0       	ldi	r25, 0x00	; 0
- 3a4:	0e 94 41 00 	call	0x82	; 0x82 <resetPinD>
-			resetPinD(0);
- 3a8:	80 e0       	ldi	r24, 0x00	; 0
+ 3a4:	0e 94 36 00 	call	0x6c	; 0x6c <setPinD>
+			resetPinD(1);
+ 3a8:	81 e0       	ldi	r24, 0x01	; 1
  3aa:	90 e0       	ldi	r25, 0x00	; 0
  3ac:	0e 94 41 00 	call	0x82	; 0x82 <resetPinD>
-			if (isPressedD(7))
- 3b0:	87 e0       	ldi	r24, 0x07	; 7
+			resetPinD(0);
+ 3b0:	80 e0       	ldi	r24, 0x00	; 0
  3b2:	90 e0       	ldi	r25, 0x00	; 0
- 3b4:	0e 94 4d 00 	call	0x9a	; 0x9a <isPressedD>
- 3b8:	2f ef       	ldi	r18, 0xFF	; 255
- 3ba:	81 ee       	ldi	r24, 0xE1	; 225
- 3bc:	94 e0       	ldi	r25, 0x04	; 4
- 3be:	21 50       	subi	r18, 0x01	; 1
- 3c0:	80 40       	sbci	r24, 0x00	; 0
- 3c2:	90 40       	sbci	r25, 0x00	; 0
- 3c4:	e1 f7       	brne	.-8      	; 0x3be <main+0x30c>
- 3c6:	00 c0       	rjmp	.+0      	; 0x3c8 <main+0x316>
- 3c8:	00 00       	nop
- 3ca:	8b ce       	rjmp	.-746    	; 0xe2 <main+0x30>
+ 3b4:	0e 94 41 00 	call	0x82	; 0x82 <resetPinD>
+			if (isPressedD(7))
+ 3b8:	87 e0       	ldi	r24, 0x07	; 7
+ 3ba:	90 e0       	ldi	r25, 0x00	; 0
+ 3bc:	0e 94 4d 00 	call	0x9a	; 0x9a <isPressedD>
+ 3c0:	89 2b       	or	r24, r25
+ 3c2:	09 f0       	breq	.+2      	; 0x3c6 <main+0x314>
+ 3c4:	1b ba       	out	0x1b, r1	; 27
+ 3c6:	2f ef       	ldi	r18, 0xFF	; 255
+ 3c8:	81 ee       	ldi	r24, 0xE1	; 225
+ 3ca:	94 e0       	ldi	r25, 0x04	; 4
+ 3cc:	21 50       	subi	r18, 0x01	; 1
+ 3ce:	80 40       	sbci	r24, 0x00	; 0
+ 3d0:	90 40       	sbci	r25, 0x00	; 0
+ 3d2:	e1 f7       	brne	.-8      	; 0x3cc <main+0x31a>
+ 3d4:	00 c0       	rjmp	.+0      	; 0x3d6 <main+0x324>
+ 3d6:	00 00       	nop
+ 3d8:	84 ce       	rjmp	.-760    	; 0xe2 <main+0x30>
 
-000003cc <_exit>:
- 3cc:	f8 94       	cli
+000003da <_exit>:
+ 3da:	f8 94       	cli
 
-000003ce <__stop_program>:
- 3ce:	ff cf       	rjmp	.-2      	; 0x3ce <__stop_program>
+000003dc <__stop_program>:
+ 3dc:	ff cf       	rjmp	.-2      	; 0x3dc <__stop_program>
