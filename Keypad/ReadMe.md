@@ -1,4 +1,5 @@
 
 # *Keypad*
-### uses internal `F_CPU` and `delay.h`
 ---
+### using `F_CPU` and `delay.h` internaly
+
